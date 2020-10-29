@@ -9,6 +9,10 @@ export default class CreateUser extends Component {
     }
 
     async componentDidMount() {
+        this.getUsers();
+    }
+
+    getUsers= async ()=>{
         const res = await axios.get('http://localhost:4000/api/users');
         this.setState({users: res.data});
     }
@@ -17,8 +21,22 @@ export default class CreateUser extends Component {
         this.setState({
             userName: e.target.value
         });
+    }
 
-        console.log(this.state.userName);
+    deleteUser = async(id)=>{
+        await axios.delete('http://localhost:4000/api/users/'+id);
+        this.getUsers();
+        
+    }
+
+    onSubmit = async(e)=>{
+        e.preventDefault();
+        await axios.post('http://localhost:4000/api/users', {
+            userName:this.state.userName
+        })
+        this.setState({userName:''});
+        this.getUsers();
+        
     }
 
     render() {
@@ -27,10 +45,13 @@ export default class CreateUser extends Component {
                 <div className="col-md-4">
                     <div className="card card-body">
                         <h3>Create new user</h3>
-                        <form >
+                        <form onSubmit={this.onSubmit}>
                             <div className="form-group">
-                                <input type="text" className="form-control" onChange={this.onChangeUserName}/>
+                                <input type="text" className="form-control" value={this.state.userName} onChange={this.onChangeUserName} />
                             </div>
+                            <button type="submit" className="btn btn-primary">
+                                Save
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -38,7 +59,7 @@ export default class CreateUser extends Component {
                     <ul className="list-group">
                         {
                             this.state.users.map(user=> (
-                                <li className="list-group-item list-group-item-action" key={user._id}> 
+                                <li className="list-group-item list-group-item-action" onDoubleClick={()=>this.deleteUser(user._id)} key={user._id}> 
                                     {user.userName}
                                 </li>))
                         }
