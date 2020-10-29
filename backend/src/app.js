@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 
 //settings
-app.set('port', 3000);
+app.set('port', 4000);
 
 //middlewares
 app.use(cors());
