@@ -13,8 +13,8 @@ export default class CreateNote extends Component {
         users: [],
         userSelected: "",
         date: new Date(),
-        content:"",
-        title:""
+        content: "",
+        title: ""
     }
 
     async componentDidMount() {
@@ -23,12 +23,25 @@ export default class CreateNote extends Component {
 
     getUsers = async () => {
         const res = await axios.get('http://localhost:4000/api/users');
-        this.setState({ users: res.data.map(user => user.userName) });
+        this.setState({
+            users: res.data.map(user => user.userName),
+            userSelected: res.data[0].userName
+        });
     }
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
-        console.log(this.state.title, this.state.content);
+        const newNote = {
+            title: this.state.title,
+            content: this.state.content,
+            date: this.state.date,
+            author: this.state.userSelected
+        }
+        console.log(newNote)
+        await axios.post('http://localhost:4000/api/notes', newNote);
+
+        //window.location.href = "/";
+
     }
 
     onInputChange = (e) => {
